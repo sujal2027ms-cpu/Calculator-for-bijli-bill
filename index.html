@@ -3,196 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Bijli Bill Calculator📌</title>
+    <title>Bijli Bill Pro - Detailed History</title>
     <style>
-        /* CSS Reset aur Basic Setup */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
 
-        /* Dark Gradient Background - Screen se bahar nahi jayega */
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden; /* Scroll hatane ke liye */
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: #fff;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #fff; padding: 15px;
         }
 
-        /* Glassmorphism Panel - Compact Size */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px; /* Padding kam ki */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
+            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px; width: 100%; max-width: 420px; min-height: 450px;
         }
 
-        /* Neon Heading - Choti ki gayi hai */
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 22px; /* Font size chota kiya */
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #00f2fe;
-            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+        /* Tabs Styling */
+        .tabs {
+            display: flex; background: rgba(0,0,0,0.3); border-radius: 10px;
+            margin-bottom: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
         }
-
-        /* Inputs ki styling - Compact Size */
-        .input-box {
-            margin-bottom: 15px;
+        .tab-btn {
+            flex: 1; padding: 10px; border: none; background: none; color: #ccc;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
         }
+        .tab-btn.active { background: #00f2fe; color: #000; }
 
-        .input-box label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #ccc;
-        }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
 
+        /* Form Styling */
+        .input-box { margin-bottom: 12px; }
+        .input-box label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
         .input-box input {
-            width: 100%;
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 19px;
-            outline: none;
-            transition: all 0.3s ease;
+            width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
+            color: #fff; font-size: 18px; outline: none;
         }
 
-        .input-box input:focus {
-            border-color: #00f2fe;
-            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        button.calc-btn {
+            width: 100%; padding: 12px; background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer;
         }
 
-        /* Glowing Button - Compact Size */
-        button {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 5px 10px rgba(0, 242, 254, 0.4);
-            margin-top: 5px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 242, 254, 0.6);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Result Box - Compact Size */
+        /* Result Box (The one you liked) */
         .result-box {
-            margin-top: 15px;
-            padding: 15px;
-            background: rgba(0, 255, 136, 0.1);
-            border-left: 4px solid #00ff88;
-            border-radius: 8px;
-            display: none;
-            animation: fadeIn 0.4s ease forwards;
+            margin-top: 15px; padding: 15px; background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88; border-radius: 8px; display: none;
         }
-
-        /* Calculation Steps Box - Jagah bachane ke liye layout change */
         .calc-steps {
-            margin-top: 12px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            color: #4facfe;
-            line-height: 1.5;
+            margin-top: 10px; padding: 10px; background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px; font-family: monospace; font-size: 13px; color: #4facfe; line-height: 1.5;
+        }
+        .total-bill {
+            font-size: 24px; font-weight: bold; color: #00ff88; text-align: center;
+            margin-top: 12px; border-top: 1px solid rgba(0, 255, 136, 0.3); padding-top: 10px;
         }
 
-        .result-box .total {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00ff88;
-            margin-top: 12px;
-            text-align: center;
-            text-shadow: 0 0 5px rgba(0, 255, 136, 0.4);
-            border-top: 1px solid rgba(0, 255, 136, 0.3);
-            padding-top: 10px;
+        /* History Table Styling */
+        .history-list { max-height: 300px; overflow-y: auto; }
+        .history-item {
+            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
+            margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .hist-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;
+            font-size: 12px; margin-top: 5px; color: #ddd;
         }
+        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .clear-btn { color: #ff4d4d; font-size: 11px; cursor: pointer; text-align: right; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
 
     <div class="glass-panel">
-        <h2>Bijli Bill Calculator📌</h2>
-        
-        <div class="input-box">
-            <label>Purani Reading (Old)</label>
-            <input type="number" id="old-reading" placeholder="Ex: 1500">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('calc')">Calculator</button>
+            <button class="tab-btn" onclick="showTab('hist')">History</button>
         </div>
-        
-        <div class="input-box">
-            <label>Nayi Reading (New)</label>
-            <input type="number" id="new-reading" placeholder="Ex: 1650">
+
+        <div id="calc-section" class="content-section active">
+            <div class="input-box">
+                <label>Old Reading (Purani)</label>
+                <input type="number" id="old-reading" placeholder="0">
+            </div>
+            <div class="input-box">
+                <label>New Reading (Nayi)</label>
+                <input type="number" id="new-reading" placeholder="0">
+            </div>
+            <button class="calc-btn" onclick="calculate()">Calculate & Save</button>
+
+            <div id="result" class="result-box"></div>
         </div>
-        
-        <button onclick="calculateBill()">Calculate</button>
-        
-        <div id="result" class="result-box"></div>
+
+        <div id="hist-section" class="content-section">
+            <span class="clear-btn" onclick="clearHistory()">🗑 Clear History</span>
+            <div id="history-list" class="history-list">
+                </div>
+        </div>
     </div>
 
     <script>
-        function calculateBill() {
-            // Inputs ki values
-            const oldReading = parseFloat(document.getElementById('old-reading').value);
-            const newReading = parseFloat(document.getElementById('new-reading').value);
-            const resultBox = document.getElementById('result');
+        function showTab(tab) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
-            // Direct Calculation
-            const unitsConsumed = newReading - oldReading;
-            const totalBill = unitsConsumed * 10;
+            if(tab === 'calc') {
+                document.getElementById('calc-section').classList.add('active');
+                event.currentTarget.classList.add('active');
+            } else {
+                document.getElementById('hist-section').classList.add('active');
+                event.currentTarget.classList.add('active');
+                loadHistory();
+            }
+        }
 
-            // Compact Result & Calculation steps
-            resultBox.style.display = 'block';
-            resultBox.innerHTML = `
-                <div style="display: flex; justify-content: space-between; font-size: 14px; color: #eee;">
-                    <span>Units: <strong>${unitsConsumed}</strong></span>
-                    <span>Rate: <strong>₹10/unit</strong></span>
-                </div> 
-                
-                <div class="calc-steps">
-                    <div style="color: #fff; font-weight: bold; margin-bottom: 3px; font-family: sans-serif; font-size: 12px;">Calculation:</div>
-                    <div>1) ${newReading} - ${oldReading} = ${unitsConsumed} Units</div>
-                    <div>2) ${unitsConsumed} × ₹10 = ₹${totalBill}</div>
+        function calculate() {
+            const oldR = parseFloat(document.getElementById('old-reading').value);
+            const newR = parseFloat(document.getElementById('new-reading').value);
+            
+            if (isNaN(oldR) || isNaN(newR) || newR < oldR) {
+                alert("Please enter correct readings!"); return;
+            }
+
+            const units = newR - oldR;
+            const total = units * 10;
+            const date = new Date().toLocaleString([], {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+
+            // Display Result Box (Pehle wala style)
+            const resBox = document.getElementById('result');
+            resBox.style.display = 'block';
+            resBox.innerHTML = `
+                <div style="display:flex; justify-content:space-between; font-size:14px;">
+                    <span>Units: <b>${units}</b></span>
+                    <span>Rate: <b>₹10/unit</b></span>
                 </div>
-
-                <div class="total">Final Bill: ₹${totalBill}</div>
+                <div class="calc-steps">
+                    <b>Calculation:</b><br>
+                    1) ${newR} - ${oldR} = ${units} Units<br>
+                    2) ${units} × ₹10 = ₹${total}
+                </div>
+                <div class="total-bill">Final Bill: ₹${total}</div>
             `;
+
+            // Save to LocalStorage with all details
+            let history = JSON.parse(localStorage.getItem('billHistoryDetailed')) || [];
+            history.unshift({ date, oldR, newR, units, total });
+            localStorage.setItem('billHistoryDetailed', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const list = document.getElementById('history-list');
+            const history = JSON.parse(localStorage.getItem('billHistoryDetailed')) || [];
+            
+            if (history.length === 0) {
+                list.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">No history yet.</p>`;
+                return;
+            }
+
+            list.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <div class="hist-header">
+                        <span style="color:#00f2fe; font-weight:bold; font-size:13px;">📅 ${item.date}</span>
+                        <span style="color:#00ff88; font-weight:bold; font-size:15px;">₹${item.total}</span>
+                    </div>
+                    <div class="hist-grid">
+                        <span>Old: <b>${item.oldR}</b></span>
+                        <span>New: <b>${item.newR}</b></span>
+                        <span>Units: <b style="color:#4facfe">${item.units}</b></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if(confirm("Sari history delete karein?")) {
+                localStorage.removeItem('billHistoryDetailed');
+                loadHistory();
+            }
         }
     </script>
-
 </body>
 </html>
 
