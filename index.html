@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compact Bijli Bill Calculator</title>
+    <style>
+        /* CSS Reset aur Basic Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Dark Gradient Background - Screen se bahar nahi jayega */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Scroll hatane ke liye */
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+        }
+
+        /* Glassmorphism Panel - Compact Size */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px; /* Padding kam ki */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        /* Neon Heading - Choti ki gayi hai */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px; /* Font size chota kiya */
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #00f2fe;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Inputs ki styling - Compact Size */
+        .input-box {
+            margin-bottom: 15px;
+        }
+
+        .input-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 19px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-box input:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Glowing Button - Compact Size */
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 10px rgba(0, 242, 254, 0.4);
+            margin-top: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 242, 254, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Result Box - Compact Size */
+        .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-left: 4px solid #00ff88;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Calculation Steps Box - Jagah bachane ke liye layout change */
+        .calc-steps {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            color: #4facfe;
+            line-height: 1.5;
+        }
+
+        .result-box .total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-top: 12px;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.4);
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+            padding-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        <h2>Bijli Bill Calculator</h2>
+        
+        <div class="input-box">
+            <label>Purani Reading (Old)</label>
+            <input type="number" id="old-reading" placeholder="Ex: 1500">
+        </div>
+        
+        <div class="input-box">
+            <label>Nayi Reading (New)</label>
+            <input type="number" id="new-reading" placeholder="Ex: 1650">
+        </div>
+        
+        <button onclick="calculateBill()">Calculate</button>
+        
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+        function calculateBill() {
+            // Inputs ki values
+            const oldReading = parseFloat(document.getElementById('old-reading').value);
+            const newReading = parseFloat(document.getElementById('new-reading').value);
+            const resultBox = document.getElementById('result');
+            
+            // Direct Calculation
+            const unitsConsumed = newReading - oldReading;
+            const totalBill = unitsConsumed * 10;
+
+            // Compact Result & Calculation steps
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `
+                <div style="display: flex; justify-content: space-between; font-size: 14px; color: #eee;">
+                    <span>Units: <strong>${unitsConsumed}</strong></span>
+                    <span>Rate: <strong>₹10/unit</strong></span>
+                </div>
+                
+                <div class="calc-steps">
+                    <div style="color: #fff; font-weight: bold; margin-bottom: 3px; font-family: sans-serif; font-size: 12px;">Calculation:</div>
+                    <div>1) ${newReading} - ${oldReading} = ${unitsConsumed} Units</div>
+                    <div>2) ${unitsConsumed} × ₹10 = ₹${totalBill}</div>
+                </div>
+
+                <div class="total">Final Bill: ₹${totalBill}</div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
+
