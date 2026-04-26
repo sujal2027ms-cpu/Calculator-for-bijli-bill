@@ -5,116 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Bill Calculator</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-        }
-
-        body {
-            background-color: #0b0e11;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: white;
-        }
-
-        .bill-card {
-            background: #161b22;
-            padding: 30px;
-            border-radius: 28px;
-            width: 90%;
-            max-width: 380px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-            border: 1px solid #30363d;
-            text-align: center;
-        }
-
-        .title {
-            font-size: 1.4rem;
-            letter-spacing: 3px;
-            margin-bottom: 30px;
-            font-weight: 800;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .field {
-            flex: 1;
-            text-align: left;
-        }
-
-        .field label {
-            font-size: 0.7rem;
-            color: #8b949e;
-            font-weight: bold;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .field input {
-            width: 100%;
-            background: #0d1117;
-            border: 2px solid #30363d;
-            border-radius: 14px;
-            padding: 15px;
-            color: white;
-            font-size: 1.3rem;
-            outline: none;
-        }
-
-        .field input:focus {
-            border-color: #58a6ff;
-        }
-
-        .details {
-            text-align: left;
-            margin-top: 10px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            color: #8b949e;
-        }
-
-        .row span:last-child {
-            color: #f0f6fc;
-            font-weight: 600;
-        }
-
-        .divider {
-            border: 0;
-            border-top: 1px solid #30363d;
-            margin: 25px 0;
-        }
-
-        .total-label {
-            color: #58a6ff;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-
-        .total-price {
-            color: #3fb950;
-            font-size: 4rem;
-            margin-top: 10px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background-color: #0b0e11; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
+        .bill-card { background: #161b22; padding: 30px; border-radius: 28px; width: 90%; max-width: 380px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid #30363d; text-align: center; }
+        .title { font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 30px; font-weight: 800; }
+        .input-group { display: flex; gap: 15px; margin-bottom: 30px; }
+        .field { flex: 1; text-align: left; }
+        .field label { font-size: 0.7rem; color: #8b949e; font-weight: bold; display: block; margin-bottom: 10px; }
+        .field input { width: 100%; background: #0d1117; border: 2px solid #30363d; border-radius: 14px; padding: 15px; color: white; font-size: 1.3rem; outline: none; }
+        .field input:focus { border-color: #58a6ff; }
+        .details { text-align: left; margin-top: 10px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.95rem; color: #8b949e; }
+        .row span:last-child { color: #f0f6fc; font-weight: 600; }
+        .divider { border: 0; border-top: 1px solid #30363d; margin: 25px 0; }
+        .total-label { color: #58a6ff; font-size: 0.85rem; font-weight: bold; }
+        .total-price { color: #3fb950; font-size: 4rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="bill-card">
         <h2 class="title">BILL REPORT</h2>
-
         <div class="input-group">
             <div class="field">
                 <label>READING 1</label>
@@ -125,7 +36,6 @@
                 <input type="number" id="reading2" placeholder="0">
             </div>
         </div>
-
         <div class="details">
             <div class="row">
                 <span>Calculation</span>
@@ -140,9 +50,7 @@
                 <span>₹10.00 / unit</span>
             </div>
         </div>
-
         <hr class="divider">
-
         <div class="total-section">
             <p class="total-label">TOTAL AMOUNT</p>
             <h1 class="total-price">₹<span id="totalAmount">0</span></h1>
@@ -155,18 +63,13 @@
         const diffLabel = document.getElementById('diffLabel');
         const unitsUsed = document.getElementById('unitsUsed');
         const totalAmount = document.getElementById('totalAmount');
-
         const rate = 10;
 
         function calculateBill() {
             let val1 = parseFloat(r1.value) || 0;
             let val2 = parseFloat(r2.value) || 0;
-
-            // Math.abs बड़े नंबर से छोटे नंबर को अपने आप घटा देता है
             let diff = Math.abs(val1 - val2);
 
-            // UI अपडेट
-            // यहाँ दिखाया गया है कि कौन सा नंबर किसमें से घट रहा है
             if (val1 >= val2) {
                 diffLabel.innerText = `${val1} - ${val2}`;
             } else {
@@ -179,6 +82,15 @@
 
         r1.addEventListener('input', calculateBill);
         r2.addEventListener('input', calculateBill);
+
+        // --- OFFLINE SYSTEM REGISTRATION ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Offline System Ready!', reg.scope))
+                .catch(err => console.log('Registration Failed', err));
+            });
+        }
     </script>
 </body>
 </html>
