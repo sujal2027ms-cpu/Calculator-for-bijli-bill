@@ -3,186 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bijli Bill Pro - Detailed History</title>
+    <title>Dashboard Bill Calculator</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --bg: #0a0c10;
+            --panel: rgba(22, 27, 34, 0.8);
+            --accent: #58a6ff;
+            --success: #238636;
+            --text: #c9d1d9;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
         body {
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: #fff; padding: 15px;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 139, 253, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(35, 134, 54, 0.1) 0px, transparent 50%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text);
+            overflow: hidden;
         }
 
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px; width: 100%; max-width: 420px; min-height: 450px;
+        .container {
+            width: 95%;
+            max-width: 450px;
+            background: var(--panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
-        /* Tabs Styling */
-        .tabs {
-            display: flex; background: rgba(0,0,0,0.3); border-radius: 10px;
-            margin-bottom: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .tab-btn {
-            flex: 1; padding: 10px; border: none; background: none; color: #ccc;
-            cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        .tab-btn.active { background: #00f2fe; color: #000; }
-
-        .content-section { display: none; }
-        .content-section.active { display: block; }
-
-        /* Form Styling */
-        .input-box { margin-bottom: 12px; }
-        .input-box label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
-        .input-box input {
-            width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px;
-            color: #fff; font-size: 18px; outline: none;
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
         }
 
-        button.calc-btn {
-            width: 100%; padding: 12px; background: linear-gradient(45deg, #4facfe, #00f2fe);
-            border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer;
+        .header h1 {
+            font-size: 20px;
+            letter-spacing: 3px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 800;
         }
 
-        /* Result Box (The one you liked) */
-        .result-box {
-            margin-top: 15px; padding: 15px; background: rgba(0, 255, 136, 0.1);
-            border-left: 4px solid #00ff88; border-radius: 8px; display: none;
-        }
-        .calc-steps {
-            margin-top: 10px; padding: 10px; background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px; font-family: monospace; font-size: 13px; color: #4facfe; line-height: 1.5;
-        }
-        .total-bill {
-            font-size: 24px; font-weight: bold; color: #00ff88; text-align: center;
-            margin-top: 12px; border-top: 1px solid rgba(0, 255, 136, 0.3); padding-top: 10px;
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        /* History Table Styling */
-        .history-list { max-height: 300px; overflow-y: auto; }
-        .history-item {
-            background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;
-            margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);
+        .box label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            color: #8b949e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
         }
-        .hist-grid {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;
-            font-size: 12px; margin-top: 5px; color: #ddd;
+
+        input {
+            width: 100%;
+            background: #0d1117;
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            outline: none;
+            transition: 0.3s;
         }
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .clear-btn { color: #ff4d4d; font-size: 11px; cursor: pointer; text-align: right; margin-bottom: 10px; display: block; }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+
+        /* Calculation Dashboard - Always Visible */
+        .dashboard {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dash-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .dash-row span:first-child {
+            color: #8b949e;
+        }
+
+        .dash-row span:last-child {
+            color: #f0f6fc;
+            font-weight: 600;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 15px 0;
+        }
+
+        .total-display {
+            text-align: center;
+        }
+
+        .total-display p {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .total-display h2 {
+            font-size: 42px;
+            color: #39d353;
+            text-shadow: 0 0 20px rgba(57, 211, 83, 0.2);
+        }
+
+        /* Hide arrows in input */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
 
-    <div class="glass-panel">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('calc')">Calculator</button>
-            <button class="tab-btn" onclick="showTab('hist')">History</button>
+    <div class="container">
+        <div class="header">
+            <h1>Bill Report</h1>
         </div>
 
-        <div id="calc-section" class="content-section active">
-            <div class="input-box">
-                <label>Old Reading (Purani)</label>
-                <input type="number" id="old-reading" placeholder="0">
+        <div class="input-section">
+            <div class="box">
+                <label>Old Reading</label>
+                <input type="number" id="oldR" placeholder="0" oninput="calc()">
             </div>
-            <div class="input-box">
-                <label>New Reading (Nayi)</label>
-                <input type="number" id="new-reading" placeholder="0">
+            <div class="box">
+                <label>New Reading</label>
+                <input type="number" id="newR" placeholder="0" oninput="calc()">
             </div>
-            <button class="calc-btn" onclick="calculate()">Calculate & Save</button>
-
-            <div id="result" class="result-box"></div>
         </div>
 
-        <div id="hist-section" class="content-section">
-            <span class="clear-btn" onclick="clearHistory()">🗑 Clear History</span>
-            <div id="history-list" class="history-list">
-                </div>
+        <div class="dashboard">
+            <div class="dash-row">
+                <span>Reading Difference</span>
+                <span id="diff">0</span>
+            </div>
+            <div class="dash-row">
+                <span>Units Used</span>
+                <span id="units">0 Units</span>
+            </div>
+            <div class="dash-row">
+                <span>Current Rate</span>
+                <span>₹10.00 / unit</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="total-display">
+                <p>TOTAL AMOUNT</p>
+                <h2 id="total">₹0</h2>
+            </div>
         </div>
     </div>
 
     <script>
-        function showTab(tab) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        function calc() {
+            const o = parseFloat(document.getElementById('oldR').value) || 0;
+            const n = parseFloat(document.getElementById('newR').value) || 0;
             
-            if(tab === 'calc') {
-                document.getElementById('calc-section').classList.add('active');
-                event.currentTarget.classList.add('active');
+            const diff = n - o;
+            const units = diff > 0 ? diff : 0;
+            const bill = units * 10;
+
+            document.getElementById('diff').innerText = n + " - " + o;
+            document.getElementById('units').innerText = units + " Units";
+            document.getElementById('total').innerText = "₹" + bill.toLocaleString();
+            
+            // Text color change if negative
+            if (n < o && n !== 0) {
+                document.getElementById('diff').style.color = "#ff7b72";
             } else {
-                document.getElementById('hist-section').classList.add('active');
-                event.currentTarget.classList.add('active');
-                loadHistory();
-            }
-        }
-
-        function calculate() {
-            const oldR = parseFloat(document.getElementById('old-reading').value);
-            const newR = parseFloat(document.getElementById('new-reading').value);
-            
-            if (isNaN(oldR) || isNaN(newR) || newR < oldR) {
-                alert("Please enter correct readings!"); return;
-            }
-
-            const units = newR - oldR;
-            const total = units * 10;
-            const date = new Date().toLocaleString([], {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
-
-            // Display Result Box (Pehle wala style)
-            const resBox = document.getElementById('result');
-            resBox.style.display = 'block';
-            resBox.innerHTML = `
-                <div style="display:flex; justify-content:space-between; font-size:14px;">
-                    <span>Units: <b>${units}</b></span>
-                    <span>Rate: <b>₹10/unit</b></span>
-                </div>
-                <div class="calc-steps">
-                    <b>Calculation:</b><br>
-                    1) ${newR} - ${oldR} = ${units} Units<br>
-                    2) ${units} × ₹10 = ₹${total}
-                </div>
-                <div class="total-bill">Final Bill: ₹${total}</div>
-            `;
-
-            // Save to LocalStorage with all details
-            let history = JSON.parse(localStorage.getItem('billHistoryDetailed')) || [];
-            history.unshift({ date, oldR, newR, units, total });
-            localStorage.setItem('billHistoryDetailed', JSON.stringify(history));
-        }
-
-        function loadHistory() {
-            const list = document.getElementById('history-list');
-            const history = JSON.parse(localStorage.getItem('billHistoryDetailed')) || [];
-            
-            if (history.length === 0) {
-                list.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">No history yet.</p>`;
-                return;
-            }
-
-            list.innerHTML = history.map(item => `
-                <div class="history-item">
-                    <div class="hist-header">
-                        <span style="color:#00f2fe; font-weight:bold; font-size:13px;">📅 ${item.date}</span>
-                        <span style="color:#00ff88; font-weight:bold; font-size:15px;">₹${item.total}</span>
-                    </div>
-                    <div class="hist-grid">
-                        <span>Old: <b>${item.oldR}</b></span>
-                        <span>New: <b>${item.newR}</b></span>
-                        <span>Units: <b style="color:#4facfe">${item.units}</b></span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function clearHistory() {
-            if(confirm("Sari history delete karein?")) {
-                localStorage.removeItem('billHistoryDetailed');
-                loadHistory();
+                document.getElementById('diff').style.color = "#f0f6fc";
             }
         }
     </script>
+
 </body>
 </html>
-
