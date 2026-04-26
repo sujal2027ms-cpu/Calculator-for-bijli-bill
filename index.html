@@ -1,215 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Bill Calculator</title>
+    <title>Smart Bill Calculator</title>
     <style>
-        :root {
-            --bg: #0a0c10;
-            --panel: rgba(22, 27, 34, 0.8);
-            --accent: #58a6ff;
-            --success: #238636;
-            --text: #c9d1d9;
-            --border: #30363d;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(56, 139, 253, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(35, 134, 54, 0.1) 0px, transparent 50%);
-            height: 100vh;
+            background-color: #0b0e11;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: var(--text);
-            overflow: hidden;
+            min-height: 100vh;
+            color: white;
         }
 
-        .container {
-            width: 95%;
-            max-width: 450px;
-            background: var(--panel);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        .header {
+        .bill-card {
+            background: #161b22;
+            padding: 30px;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 380px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+            border: 1px solid #30363d;
             text-align: center;
-            margin-bottom: 25px;
         }
 
-        .header h1 {
-            font-size: 20px;
+        .title {
+            font-size: 1.4rem;
             letter-spacing: 3px;
-            color: #fff;
-            text-transform: uppercase;
+            margin-bottom: 30px;
             font-weight: 800;
         }
 
-        .input-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .input-group {
+            display: flex;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
-        .box label {
-            display: block;
-            font-size: 10px;
-            font-weight: 700;
+        .field {
+            flex: 1;
+            text-align: left;
+        }
+
+        .field label {
+            font-size: 0.7rem;
             color: #8b949e;
-            margin-bottom: 8px;
-            text-transform: uppercase;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
         }
 
-        input {
+        .field input {
             width: 100%;
             background: #0d1117;
-            border: 1px solid var(--border);
-            padding: 12px;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 18px;
-            font-weight: 600;
+            border: 2px solid #30363d;
+            border-radius: 14px;
+            padding: 15px;
+            color: white;
+            font-size: 1.3rem;
             outline: none;
-            transition: 0.3s;
         }
 
-        input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        .field input:focus {
+            border-color: #58a6ff;
         }
 
-        /* Calculation Dashboard - Always Visible */
-        .dashboard {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .details {
+            text-align: left;
+            margin-top: 10px;
         }
 
-        .dash-row {
+        .row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-
-        .dash-row span:first-child {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
             color: #8b949e;
         }
 
-        .dash-row span:last-child {
+        .row span:last-child {
             color: #f0f6fc;
             font-weight: 600;
         }
 
         .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 15px 0;
+            border: 0;
+            border-top: 1px solid #30363d;
+            margin: 25px 0;
         }
 
-        .total-display {
-            text-align: center;
+        .total-label {
+            color: #58a6ff;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
 
-        .total-display p {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .total-display h2 {
-            font-size: 42px;
-            color: #39d353;
-            text-shadow: 0 0 20px rgba(57, 211, 83, 0.2);
-        }
-
-        /* Hide arrows in input */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .total-price {
+            color: #3fb950;
+            font-size: 4rem;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>Bill Report</h1>
+    <div class="bill-card">
+        <h2 class="title">BILL REPORT</h2>
+
+        <div class="input-group">
+            <div class="field">
+                <label>READING 1</label>
+                <input type="number" id="reading1" placeholder="0">
+            </div>
+            <div class="field">
+                <label>READING 2</label>
+                <input type="number" id="reading2" placeholder="0">
+            </div>
         </div>
 
-        <div class="input-section">
-            <div class="box">
-                <label>Old Reading</label>
-                <input type="number" id="oldR" placeholder="0" oninput="calc()">
+        <div class="details">
+            <div class="row">
+                <span>Calculation</span>
+                <span id="diffLabel">0 - 0</span>
             </div>
-            <div class="box">
-                <label>New Reading</label>
-                <input type="number" id="newR" placeholder="0" oninput="calc()">
-            </div>
-        </div>
-
-        <div class="dashboard">
-            <div class="dash-row">
-                <span>Reading Difference</span>
-                <span id="diff">0</span>
-            </div>
-            <div class="dash-row">
+            <div class="row">
                 <span>Units Used</span>
-                <span id="units">0 Units</span>
+                <span id="unitsUsed">0 Units</span>
             </div>
-            <div class="dash-row">
+            <div class="row">
                 <span>Current Rate</span>
                 <span>₹10.00 / unit</span>
             </div>
+        </div>
 
-            <div class="divider"></div>
+        <hr class="divider">
 
-            <div class="total-display">
-                <p>TOTAL AMOUNT</p>
-                <h2 id="total">₹0</h2>
-            </div>
+        <div class="total-section">
+            <p class="total-label">TOTAL AMOUNT</p>
+            <h1 class="total-price">₹<span id="totalAmount">0</span></h1>
         </div>
     </div>
 
     <script>
-        function calc() {
-            const o = parseFloat(document.getElementById('oldR').value) || 0;
-            const n = parseFloat(document.getElementById('newR').value) || 0;
-            
-            const diff = n - o;
-            const units = diff > 0 ? diff : 0;
-            const bill = units * 10;
+        const r1 = document.getElementById('reading1');
+        const r2 = document.getElementById('reading2');
+        const diffLabel = document.getElementById('diffLabel');
+        const unitsUsed = document.getElementById('unitsUsed');
+        const totalAmount = document.getElementById('totalAmount');
 
-            document.getElementById('diff').innerText = n + " - " + o;
-            document.getElementById('units').innerText = units + " Units";
-            document.getElementById('total').innerText = "₹" + bill.toLocaleString();
-            
-            // Text color change if negative
-            if (n < o && n !== 0) {
-                document.getElementById('diff').style.color = "#ff7b72";
+        const rate = 10;
+
+        function calculateBill() {
+            let val1 = parseFloat(r1.value) || 0;
+            let val2 = parseFloat(r2.value) || 0;
+
+            // Math.abs बड़े नंबर से छोटे नंबर को अपने आप घटा देता है
+            let diff = Math.abs(val1 - val2);
+
+            // UI अपडेट
+            // यहाँ दिखाया गया है कि कौन सा नंबर किसमें से घट रहा है
+            if (val1 >= val2) {
+                diffLabel.innerText = `${val1} - ${val2}`;
             } else {
-                document.getElementById('diff').style.color = "#f0f6fc";
+                diffLabel.innerText = `${val2} - ${val1}`;
             }
-        }
-    </script>
 
+            unitsUsed.innerText = `${diff} Units`;
+            totalAmount.innerText = (diff * rate).toLocaleString();
+        }
+
+        r1.addEventListener('input', calculateBill);
+        r2.addEventListener('input', calculateBill);
+    </script>
 </body>
 </html>
