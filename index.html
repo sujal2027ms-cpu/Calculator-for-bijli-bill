@@ -2,13 +2,46 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Bill Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Multi Pro Calculator</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Multi%20Calculator%22,%22short_name%22:%22Calc%22,%22start_url%22:%22index.html%22,%22display%22:%22standalone%22,%22background_color%22:%22%23000000%22,%22theme_color%22:%22%23000000%22}">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background-color: #0b0e11; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
-        .bill-card { background: #161b22; padding: 30px; border-radius: 28px; width: 90%; max-width: 380px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid #30363d; text-align: center; }
-        .title { font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 30px; font-weight: 800; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { background: #000; color: white; height: 100dvh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        
+        /* App Screens Management */
+        .app-screen { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .app-screen.active { display: flex; }
+
+        /* Top Navigation / Back Button */
+        .top-nav { position: absolute; top: 20px; left: 20px; width: 100%; text-align: left; z-index: 10; }
+        .back-btn { background: #1c1c1e; color: #00ff9d; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; border: 1px solid #00ff9d; }
+
+        /* --- HOME SCREEN STYLES --- */
+        .home-title { font-size: 2rem; margin-bottom: 40px; font-weight: 800; color: #00ff9d; text-align: center; }
+        .menu-grid { display: flex; flex-direction: column; gap: 20px; width: 90%; max-width: 300px; }
+        .menu-btn { background: #161b22; color: #fff; padding: 25px; border-radius: 20px; border: 2px solid #30363d; font-size: 1.2rem; font-weight: bold; cursor: pointer; transition: 0.3s; text-align: center; }
+        .menu-btn:active { background: #30363d; border-color: #00ff9d; }
+        .menu-btn span { display: block; font-size: 0.8rem; color: #8b949e; margin-top: 5px; font-weight: normal; }
+
+        /* --- NORMAL CALCULATOR STYLES --- */
+        .calculator { width: 100%; max-width: 400px; height: 100%; display: flex; flex-direction: column; padding: 20px; padding-top: 80px; }
+        .display { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end; padding-bottom: 20px; }
+        #screen { width: 100%; background: transparent; border: none; outline: none; text-align: right; color: #fff; font-size: 4.5rem; }
+        .buttons-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-bottom: 20px; }
+        .btn { height: 75px; border-radius: 50px; border: none; background: #1c1c1e; color: #fff; font-size: 1.5rem; display: flex; justify-content: center; align-items: center; }
+        .operator { background: #2c2c2e; color: #00ff9d; }
+        .equal { background: #00ff9d; color: #000; font-weight: bold; }
+
+        /* --- BILL CALCULATOR STYLES --- */
+        .bill-card { background: #161b22; padding: 30px; border-radius: 28px; width: 90%; max-width: 380px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid #30363d; text-align: center; margin-top: 50px; }
+        .bill-title { font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 30px; font-weight: 800; }
         .input-group { display: flex; gap: 15px; margin-bottom: 30px; }
         .field { flex: 1; text-align: left; }
         .field label { font-size: 0.7rem; color: #8b949e; font-weight: bold; display: block; margin-bottom: 10px; }
@@ -20,44 +53,115 @@
         .divider { border: 0; border-top: 1px solid #30363d; margin: 25px 0; }
         .total-label { color: #58a6ff; font-size: 0.85rem; font-weight: bold; }
         .total-price { color: #3fb950; font-size: 4rem; margin-top: 10px; }
+
+        /* --- DOWNLOAD POP-UP STYLES --- */
+        #download-popup { position: fixed; bottom: -100%; left: 0; width: 100%; background: #1c1c1e; padding: 20px; border-top: 2px solid #00ff9d; border-radius: 20px 20px 0 0; transition: 0.5s; z-index: 9999; text-align: center; }
+        #download-popup.show { bottom: 0; }
+        .dl-btn { background: #00ff9d; color: #000; border: none; padding: 15px 30px; border-radius: 12px; font-weight: bold; margin-top: 15px; width: 100%; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-    <div class="bill-card">
-        <h2 class="title">BILL REPORT</h2>
-        <div class="input-group">
-            <div class="field">
-                <label>READING 1</label>
-                <input type="number" id="reading1" placeholder="0">
+    <div id="home-screen" class="app-screen active">
+        <h1 class="home-title">Select App</h1>
+        <div class="menu-grid">
+            <div class="menu-btn" onclick="openScreen('normal-calc-screen')">
+                🔢 Normal Calculator
+                <span>Math & Daily Use</span>
             </div>
-            <div class="field">
-                <label>READING 2</label>
-                <input type="number" id="reading2" placeholder="0">
+            <div class="menu-btn" onclick="openScreen('bill-calc-screen')">
+                ⚡ Bijli Bill Calculator
+                <span>Calculate Electricity Units</span>
             </div>
-        </div>
-        <div class="details">
-            <div class="row">
-                <span>Calculation</span>
-                <span id="diffLabel">0 - 0</span>
-            </div>
-            <div class="row">
-                <span>Units Used</span>
-                <span id="unitsUsed">0 Units</span>
-            </div>
-            <div class="row">
-                <span>Current Rate</span>
-                <span>₹10.00 / unit</span>
-            </div>
-        </div>
-        <hr class="divider">
-        <div class="total-section">
-            <p class="total-label">TOTAL AMOUNT</p>
-            <h1 class="total-price">₹<span id="totalAmount">0</span></h1>
         </div>
     </div>
 
+    <div id="normal-calc-screen" class="app-screen">
+        <div class="top-nav">
+            <button class="back-btn" onclick="openScreen('home-screen')">🔙 Back</button>
+        </div>
+        <div class="calculator">
+            <div class="display"><input type="text" id="screen" value="0" readonly></div>
+            <div class="buttons-grid">
+                <button class="btn operator" style="grid-column: span 2;" onclick="screen.value='0'">C</button>
+                <button class="btn operator" onclick="add('÷')">÷</button>
+                <button class="btn operator" onclick="add('×')">×</button>
+                <button class="btn" onclick="add('7')">7</button><button class="btn" onclick="add('8')">8</button><button class="btn" onclick="add('9')">9</button>
+                <button class="btn operator" onclick="add('-')">−</button>
+                <button class="btn" onclick="add('4')">4</button><button class="btn" onclick="add('5')">5</button><button class="btn" onclick="add('6')">6</button>
+                <button class="btn operator" onclick="add('+')">+</button>
+                <button class="btn" onclick="add('1')">1</button><button class="btn" onclick="add('2')">2</button><button class="btn" onclick="add('3')">3</button>
+                <button class="btn equal" onclick="calc()">=</button>
+                <button class="btn" style="grid-column: span 2;" onclick="add('0')">0</button>
+                <button class="btn" onclick="add('.')">.</button>
+                <button class="btn" onclick="delChar()" style="color:#ffa502">DEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="bill-calc-screen" class="app-screen">
+        <div class="top-nav">
+            <button class="back-btn" onclick="openScreen('home-screen')">🔙 Back</button>
+        </div>
+        <div class="bill-card">
+            <h2 class="bill-title">BILL REPORT</h2>
+            <div class="input-group">
+                <div class="field">
+                    <label>READING 1</label>
+                    <input type="number" id="reading1" placeholder="0">
+                </div>
+                <div class="field">
+                    <label>READING 2</label>
+                    <input type="number" id="reading2" placeholder="0">
+                </div>
+            </div>
+            <div class="details">
+                <div class="row">
+                    <span>Calculation</span>
+                    <span id="diffLabel">0 - 0</span>
+                </div>
+                <div class="row">
+                    <span>Units Used</span>
+                    <span id="unitsUsed">0 Units</span>
+                </div>
+                <div class="row">
+                    <span>Current Rate</span>
+                    <span>₹10.00 / unit</span>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="total-section">
+                <p class="total-label">TOTAL AMOUNT</p>
+                <h1 class="total-price">₹<span id="totalAmount">0</span></h1>
+            </div>
+        </div>
+    </div>
+
+    <div id="download-popup">
+        <h3 style="color: white; margin-bottom: 5px;">Install Multi Calculator</h3>
+        <p style="color: #aaa; font-size: 0.9rem;">Ise app ki tarah use karne ke liye install karein</p>
+        <button class="dl-btn" id="installBtn">INSTALL NOW</button>
+        <p style="margin-top: 15px; font-size: 0.9rem; color: #8b949e; cursor: pointer;" onclick="hidePopup()">Nahi, baad mein</p>
+    </div>
+
     <script>
+        // --- SCREEN NAVIGATION LOGIC ---
+        function openScreen(screenId) {
+            // Sabhi screens ko hide karein
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            // Sirf target screen ko show karein
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // --- NORMAL CALCULATOR LOGIC ---
+        const screen = document.getElementById('screen');
+        function add(v) { if(screen.value==='0') screen.value=v; else screen.value+=v; }
+        function delChar() { screen.value = screen.value.length>1 ? screen.value.slice(0,-1) : '0'; }
+        function calc() { try { screen.value = eval(screen.value.replace(/×/g,'*').replace(/÷/g,'/')); } catch(e){ screen.value="Error"; } }
+
+        // --- BIJLI BILL LOGIC ---
         const r1 = document.getElementById('reading1');
         const r2 = document.getElementById('reading2');
         const diffLabel = document.getElementById('diffLabel');
@@ -83,13 +187,31 @@
         r1.addEventListener('input', calculateBill);
         r2.addEventListener('input', calculateBill);
 
-        // --- OFFLINE SYSTEM REGISTRATION ---
+        // --- INSTALL (PWA) POP-UP LOGIC ---
+        const popup = document.getElementById('download-popup');
+        let deferredPrompt;
+
+        function hidePopup() { popup.classList.remove('show'); }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // App load hone ke 3 second baad pop-up dikhega
+            setTimeout(() => { popup.classList.add('show'); }, 3000);
+        });
+
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') hidePopup();
+                deferredPrompt = null;
+            }
+        });
+
+        // Service Worker offline aur install prompt support ke liye
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                .then(reg => console.log('Offline System Ready!', reg.scope))
-                .catch(err => console.log('Registration Failed', err));
-            });
+            navigator.serviceWorker.register('data:text/javascript;base64,' + btoa("self.addEventListener('fetch', (e) => {});"));
         }
     </script>
 </body>
