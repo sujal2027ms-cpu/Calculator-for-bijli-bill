@@ -4,8 +4,11 @@
 }
 body {
       background: linear-gradient(135deg, #635BFF 0%, #00E5E5 100%);
-
+      background-repeat: no-repeat;
+      background-size: cover;
 }
+
+
 
 input {
       padding: 20px;
