@@ -2,10 +2,11 @@
       margin: 0;
       padding: 0;
 }
-body {
-      background: linear-gradient(135deg, #635BFF 0%, #00E5E5 100%);
-      background-repeat: no-repeat;
-      background-size: cover;
+body{
+  background: linear-gradient(209deg, #2A7B9B, #1CFF7B, #EDDD53);
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 
