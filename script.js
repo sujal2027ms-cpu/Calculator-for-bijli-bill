@@ -1,3 +1,4 @@
+import { SpeedInsights } from "@vercel/speed-insights/next"
 function btn() {
       let a = Number(document.getElementById('p1').value);
       let b = Number(document.getElementById('p2').value);
