@@ -57,9 +57,9 @@ h2 {
 
 .solve {
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);;
-      color: #1a1a1a;
+      color: white;
       font-weight: bolder;
-      font-size: 40px;
+      font-size: 45px;
       padding: 40px;
       margin: 30px;
       border: none;
